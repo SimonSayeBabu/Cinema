@@ -1,0 +1,127 @@
+bouge {
+	align-items: stretch;
+	-webkit-animation-duration: 20s;
+	animation-duration: 20s;
+	-webkit-animation-iteration-count: infinite;
+	animation-iteration-count: infinite;
+	-webkit-animation-timing-function: linear;
+	animation-timing-function: linear;
+	display: flex;
+	-webkit-animation-name: glisser;
+	animation-name: glisser;
+}
+
+.bouge:hover {
+	animation-play-state: paused;
+	-webkit-animation-play-state: paused;
+}
+
+@-webkit-keyframes glisser {
+	0% {
+		-webkit-transform: translateX(100%);
+	}
+
+	100% {
+		-webkit-transform: translateX(-200%);
+	}
+}
+
+@keyframes glisser {
+	0% {
+		transform: translateX(100%);
+	}
+
+	100% {
+		transform: translateX(-200%);
+	}
+}
+
+.no-overflow {
+	overflow: hidden;
+}
+
+
+/* Animaton de défilement vertical en trois temps */
+
+.roule-3 {
+
+	-webkit-animation-duration: 7s;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-timing-function: linear;
+	-webkit-animation-name: rouler;
+
+	animation-duration: 7s;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+	animation-name: rouler;
+
+	text-align: left;
+}
+
+.roule-container {
+	overflow: hidden;
+	display: inline-flex;
+	height: 1.5em;
+	font-size: 200%;
+	text-align: left;
+}
+
+@-webkit-keyframes rouler {
+	0% {
+		-webkit-transform: translateY(0%);
+	}
+
+	27% {
+		-webkit-transform: translateY(0%);
+	}
+
+	33% {
+		-webkit-transform: translateY(-100%);
+	}
+
+	60% {
+		-webkit-transform: translateY(-100%);
+	}
+
+	66% {
+		-webkit-transform: translateY(-200%);
+	}
+
+	93% {
+		-webkit-transform: translateY(-200%);
+	}
+
+	100% {
+		-webkit-transform: translateY(-300%);
+	}
+}
+
+@keyframes rouler {
+	0% {
+		transform: translateY(0%);
+	}
+
+	27% {
+		transform: translateY(0%);
+	}
+
+	33% {
+		transform: translateY(-100%);
+	}
+
+	60% {
+		transform: translateY(-100%);
+	}
+
+	66% {
+		transform: translateY(-200%);
+	}
+
+	93% {
+		transform: translateY(-200%);
+	}
+
+	100% {
+		transform: translateY(-300%);
+	}
+}

@@ -1,0 +1,211 @@
+<recherche>
+    <!-- Corps -->
+    <div class="corps">
+        <!-- filtres -->
+        <div class="filters-container">
+            <div class="filters">
+                <div id="movie" class={ state.sortBy=='movie' ? 'selected filter' :'filter' } onclick={sortBy}>
+                    Films</div>
+                <div id="tv" class={ state.sortBy=='tv' ? 'selected filter' :'filter' } onclick={sortBy}>
+                    Séries</div>
+                <div id="artist" class={ state.sortBy=='artist' ? 'selected filter' :'filter' } onclick={sortBy}>
+                    Artistes</div>
+            </div>
+            <div if={this.state.sortBy!='artist' } class="tags">
+                <div each={ tag in this.state.filtertags } onclick={toggleTag} class={
+                    this.state.toggledtags.includes(tag['id'].toString()) ? "tag tag-on" : "tag tag-off" } id={
+                    tag['id'] }>{
+                    tag['name'] }
+                </div>
+            </div>
+        </div>
+        <div class="partie">
+            <affiche if={this.state.sortBy!='artist' } content="{this.state.result}" genres="{this.state.genres}" media="movie" ligne_bloc="affiche-bloc">
+            </affiche>
+				
+			<personne if={this.state.sortBy=='artist' } content="{this.state.result}" ligne_bloc="headshot-bloc"></personne>
+        </div>
+
+        <pagination current="{this.state.currentPage}" max="{this.state.maxPage}" place="#/search/{this.state.sortBy}/{this.state.search}/"
+            updateParent="{ updateParent }">
+        </pagination>
+
+    </div>
+
+    <script>
+        export default function accueillir() {
+            base: 'https://55182d48-0a25-4528-9bc4-0c1e9e14e469-00-17vbw33vq3fgj.picard.replit.dev/'
+            return {
+                async onBeforeMount(props, state) {
+                    // initial state
+                    this.state = {
+                        sortBy: props.type,
+                        filtertags: [],
+                        toggledtags: [],
+                        result: [],
+                        genres: {},
+                        currentPage: props.page,
+                        maxPage: 0,
+						search: props.search,
+						searching: true
+                    }
+                    await this.setfiltertags()
+					
+					this.linkToTag()
+					
+					if(this.state.searching){
+						await this.search()
+					}	
+					else{
+						await this.discover()
+					}
+					
+                    await this.setGenre()
+                    this.update()
+                    console.log(this.state.filtertags)
+                    console.log(this.state.toggledtags)
+                },
+                linkToTag() {
+                    let str = this.props.search
+					console.log(str.length+"")
+                    if(str.startsWith("search=") && str.length > 7){
+						this.state.search = str
+					}
+					else{
+						this.state.searching = false;
+						let arr = str.split("&")
+						let out = []
+						for (let i = 0; i < this.state.filtertags.length; i++) {
+							if (arr.includes(this.state.filtertags[i]['id'].toString())) {
+								out.push(this.state.filtertags[i]['id'].toString())
+							}
+						}
+						this.state.toggledtags = out
+					}
+
+                },
+                tagToLink() {
+                    console.log(this.state.toggledtags)
+                    return this.state.toggledtags.join("&");
+                },
+                toggleTag(e) {
+					this.state.searching = false;
+                    console.log(e.target.id)
+                    if (this.state.toggledtags.includes(e.target.id)) {
+                        e.target.classList.remove("tag-on")
+                        e.target.classList.add("tag-off")
+                        this.state.toggledtags.splice(this.state.toggledtags.indexOf(e.target.id), 1)
+                    }
+                    else {
+                        e.target.classList.add("tag-on")
+                        e.target.classList.remove("tag-off")
+                        this.state.toggledtags.push(e.target.id)
+                    }
+                    window.history.pushState(null, null, "#/search/" + this.state.sortBy + "/" + this.tagToLink())
+                    this.updateParent(this.state.currentPage)
+                },
+                async sortBy(e) {
+                    let id = e.target.id
+                    if (this.state.sortBy == id) {
+                        return false
+                    }
+                    this.state.sortBy = id
+                    this.state.currentPage = 1
+                    this.state.toggledtags = []
+                    window.history.pushState(null, null, "#/search/" + id + "/" + this.state.search)
+                    await this.setfiltertags()
+
+					if(this.state.searching){
+						await this.search()
+					}	
+					else{
+						await this.discover()
+					}
+					
+                    await this.setGenre()
+                    this.update()
+                    return true
+                },
+                async setGenre() {
+					if (this.state.sortBy != "artist") {
+	                    let api = apiManager()
+	                    for (let film of this.state['result']) {
+	                        let movie = await api.getMovie(film['id']);
+	                        let genres = movie['genres'].map(genre => genre['name']);
+	                        this.state.genres[film['id']] = genres;
+	                    }
+					}
+                },
+                async setfiltertags() {
+                    if (this.state.sortBy != "artist") {
+                        let api = apiManager()
+                        let temp = {}
+                        out = []
+                        if (this.state.sortBy == "movie") {
+                            temp = await api.getTagsMovie()
+                        }
+                        else if (this.state.sortBy == "tv") {
+                            temp = await api.getTagsTV()
+                        }
+                        this.state['filtertags'] = temp['genres']
+                    }
+                },
+                async discover() {
+                    let api = apiManager()
+					let temp
+					if(this.state.sortBy == "artist"){
+						temp = await api.getPopularPeople(this.state.currentPage)
+					}
+					else{
+						temp = await api.discover(this.state.sortBy, this.state.toggledtags.toString(), this.state.currentPage)
+					}
+                    this.state['result'] = temp["results"]
+                    if (temp["total_pages"] > 500) {
+                        this.state.maxPage = 500
+                    }
+                    else {
+                        this.state.maxPage = temp["total_pages"]
+                    }
+                    this.update()
+                },
+				async search(){
+					let api = apiManager()
+					let temp
+					if(this.state.sortBy=="artist"){
+						temp = await api.searchPerson(this.state.search.slice(7), this.state.currentPage)
+					}
+					else if(this.state.sortBy=="movie"){
+						temp = await api.searchMovie(this.state.search.slice(7), this.state.currentPage)
+					}
+					else{
+						temp = await api.searchTV(this.state.search.slice(7), this.state.currentPage)
+					}
+					this.state['result'] = temp["results"]
+					if (temp["total_pages"] > 500) {
+						this.state.maxPage = 500
+					}
+					else {
+						this.state.maxPage = temp["total_pages"]
+					}
+					this.update()
+					
+				},
+                async updateParent(page) {
+                    this.state.currentPage = page
+                    
+					this.setfiltertags()
+					if(this.state.searching){
+						await this.search()
+					}	
+					else{
+						await this.discover()
+					}
+                    await this.setGenre()
+                    this.update()
+                    console.log("done")
+                }
+
+            }
+        }
+    </script>
+</recherche>

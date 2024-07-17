@@ -1,0 +1,249 @@
+<ficheartiste>
+  <div class="ecran-full description">
+    <!-- Titre {console.log(this.state.content)}-->
+    <div>
+      <div class="left-side-thing">
+        <div if={!this.state.content['profile_path']} class="poster" style="background-image: url(img/noperson.png);">
+        </div>
+        <div if={this.state.content['profile_path']} class="poster"
+          style="background-image: url(https://image.tmdb.org/t/p/original/{this.state.content['profile_path']});">
+        </div>
+
+
+        <div class="side-part">
+          <!-- original_name / name (y'a les deux) -->
+          <h3>Alias</h3>
+          <div>
+            {this.state.content['also_known_as']}
+          </div>
+          <h3>Célèbre pour</h3>
+          <!-- known_for_department -->
+          <div>Acting</div>
+        </div>
+
+      </div>
+      <div class="right-side-thing">
+
+        <!-- "Acting" name -->
+        <h5 class="titre-grand">
+          {this.state.content['name']}
+        </h5>
+
+
+        <!-- runtime & production_countries & release date & status-->
+        <div class="sous-titre">
+          <div>
+            { this.state.content['place_of_birth'] } &nbsp; - &nbsp; {USdateToEUdate(this.state.content['birthday'])}
+            &nbsp; - &nbsp; {this.state.content['known_for_department']}
+          </div>
+        </div>
+
+        <!-- overview -->
+        <div class="long-text">
+          {this.state.content['biography']}
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Corps -->
+  <div class="corps">
+    <div class="right-side-thing">
+
+
+      <div class="side-part">
+        <!-- Titre de partie -->
+        <h3 class="">Films</h3>
+
+        <div if={this.state.creditsMovie.cast.length>0}>
+          <h4>Cast</h4>
+          <!-- Affiches -->
+          <affiche content="{this.state.creditsMovie.cast}" genres="{this.state.creditsMovieTags}" media="movie"
+            ligne_bloc="affiche-ligne">
+          </affiche>
+        </div>
+        <div if={this.state.creditsMovie.crew.length>0}>
+          <h4>Crew</h4>
+          <!-- Affiches -->
+          <affiche content="{this.state.creditsMovie.crew}" genres="{this.state.creditsMovieTags}" media="movie"
+            ligne_bloc="affiche-ligne">
+          </affiche>
+        </div>
+
+        <!-- Titre de partie -->
+        <h3 class="">Séries</h3>
+
+        <div if={this.state.creditsTv.cast.length>0}>
+          <h4>Cast</h4>
+          <!-- Affiches -->
+          <affiche content="{this.state.creditsTv.cast}" genres="{this.state.creditsTvTags}" media="tv"
+            ligne_bloc="affiche-ligne">
+          </affiche>
+        </div>
+        <div if={this.state.creditsTv.crew.length>0}>
+          <h4>Crew</h4>
+          <!-- Affiches -->
+          <affiche content="{this.state.creditsTv.crew}" genres="{this.state.creditsTvTags}" media="tv"
+            ligne_bloc="affiche-ligne">
+          </affiche>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script>
+    export default function accueillir() {
+      return {
+        async onBeforeMount(props, state) {
+          this.state = {
+            id: this.props.id,
+            content: [],
+            creditsTv: {},
+            creditsTvTags: {},
+            creditsMovie: {},
+            creditsMovieTags: {}
+          }
+          await this.getContent()
+          await this.getCreditsMovie()
+          await this.getCreditsTV()
+          //await this.setGenre()
+          this.update()
+        },
+        async getContent() {
+          let api = apiManager()
+          let temp = []
+          temp = await api.getPeople(this.state.id)
+          this.state['content'] = temp
+        },
+        async getCreditsTV() {
+          let api = apiManager()
+          let temp = []
+          temp = await api.getPeopleCreditsTV(this.state.id)
+          this.state['creditsTv']['cast'] = temp['cast']
+          this.state['creditsTv']['crew'] = temp['crew']
+        },
+        async getCreditsMovie() {
+          let api = apiManager()
+          let temp = []
+          temp = await api.getPeopleCreditsMovie(this.state.id)
+          this.state['creditsMovie']['cast'] = temp['cast']
+          this.state['creditsMovie']['crew'] = temp['crew']
+        },
+        async setGenre() {
+          let api = apiManager()
+          for (let elmt of this.state['creditsMovie']['cast'].concat(this.state['creditsMovie']['crew'])) {
+            let movie = await api.getMovie(elmt['id']);
+            let genresMovie = movie['genres'].map(genresMovie => genresMovie['name']);
+            this.state.creditsMovieTags[elmt['id']] = genresMovie;
+          }
+          for (let elmt of this.state['creditsTv']['cast'].concat(this.state['creditsMovie']['crew'])) {
+            let tv = await api.getTV(elmt['id']);
+            let genresTV = tv['genres'].map(genresTV => genresTV['name']);
+            this.state.creditsTvTags[elmt['id']] = genresTV;
+          }
+        },
+        edit(e) {
+          // update only the text state
+          this.update({
+            text: e.target.value
+          })
+        },
+        search(e) {
+
+        },
+        stars(note) {
+          let dico = []
+
+          for (let i = 1; i < 11; i++) {
+            dico.push(i <= note)
+          }
+
+          return dico
+        },
+        minutesToHours(time) {
+          let minutes = time % 60
+          let hours = (time - minutes) / 60
+          return hours + "h" + minutes
+        },
+        USdateToEUdate(date) {
+          date = String(date)
+          let year = date.substring(0, 4)
+          let month = date.substring(5, 7)
+          let day = parseInt(date.substring(8, 10))
+
+          switch (month) {
+            case "01":
+              month = "janvier"
+              break
+            case "02":
+              month = "février"
+              break
+            case "03":
+              month = "mars"
+              break
+            case "04":
+              month = "avril"
+              break
+            case "05":
+              month = "mai"
+              break
+            case "06":
+              month = "juin"
+              break
+            case "07":
+              month = "juillet"
+              break
+            case "08":
+              month = "août"
+              break
+            case "09":
+              month = "septembre"
+              break
+            case "10":
+              month = "octobre"
+              break
+            case "11":
+              month = "novembre"
+              break
+            case "12":
+              month = "décembre"
+              break
+          }
+
+          return day + " " + month + " " + year
+
+        }
+      }
+    }
+  </script>
+</ficheartiste>
+
+
+<!--
+
+2
+
+id
+: 
+2080867
+known_for
+: 
+Array(1)
+0
+: 
+{adult: false, backdrop_path: null, id: 87713, title: 'White Angel', original_language: 'en', …}
+length
+: 
+
+
+
+popularity
+: 
+0.6
+profile_path
+: 
+null
+-->

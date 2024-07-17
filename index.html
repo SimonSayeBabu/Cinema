@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Cinema - Accueil</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="accueil.css">
+    <link rel="stylesheet" href="animation.css">
+    <script src="api.js"></script>
+    <script src="main.riot" type="riot"></script>
+    <script src="affiche.riot" type="riot"></script>
+    <script src="header.riot" type="riot"></script>
+    <script src="accueil.riot" type="riot"></script>
+    <script src="screen.riot" type="riot"></script>
+    <script src="filtre-film.riot" type="riot"></script>
+    <script src="filtre-serie.riot" type="riot"></script>
+    <script src="fiche-film.riot" type="riot"></script>
+    <script src="pagination.riot" type="riot"></script>
+    <script src="personne.riot" type="riot"></script>
+    <script src="fiche-artiste.riot" type="riot"></script>
+    <script src="resultat-recherche.riot" type="riot"></script>
+    <script src="https://unpkg.com/riot@9.1.3/riot+compiler.min.js"></script>
+    <script src="https://unpkg.com/@riotjs/route@9.2/index.umd.js"></script>
+    <script src="https://kit.fontawesome.com/a0fe27fe10.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <main />
+    <script>
+        riot.register('router', route.Router);
+        riot.register('route', route.Route);
+        riot.compile().then(() => {
+            riot.mount('main', {})
+        })
+    </script>
+</body>
+
+</html>

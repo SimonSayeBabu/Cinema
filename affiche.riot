@@ -1,0 +1,151 @@
+<affiche class="">
+	<div class={this.props.ligne_bloc=="affiche-ligne" ? "slider" : "" }>
+		<div class={this.props.ligne_bloc}>
+			<a each={elmt in this.props.content} href="#/fiche/{this.props.media}/{this.elmt['id']}" class="affiche">
+
+				<!-- Sur la ligne -->
+				<!-- Poster -->
+				<div if={!elmt['poster_path']} class="poster"
+					style="background-image: url(img/noaffiche.png);">
+				</div>
+				<div if={!!elmt['poster_path']} class="poster"
+					style="background-image: url(https://image.tmdb.org/t/p/w500/{elmt['poster_path']});">
+				</div>
+
+				<!-- Titre -->
+				<div class="titre">
+					<h5 if={elmt['media_type']=="movie" } class="">
+						{ elmt['title'] }
+					</h5>
+					<h5 if={elmt['media_type']=="tv" } class="">
+						{ elmt['name'] }
+					</h5>
+					<h5 if={!elmt['media_type']} class="">
+						{ elmt['title'] }
+						{ elmt['name'] }
+					</h5>
+				</div>
+
+				<!-- En overlay -->
+				<div class="overlay">
+
+					<!-- Poster -->
+					<div if={!elmt['poster_path']} class="poster-over"
+						style="background-image: url(img/noaffiche.png);">
+					</div>
+					<div if={!!elmt['poster_path']} class="poster-over"
+						style="background-image: url(https://image.tmdb.org/t/p/w500/{elmt['poster_path']});">
+					</div>
+
+					<div class="info">
+						<!-- Titre -->
+						<div class="titre-over">
+							<h5 if={elmt['media_type']=="movie" } class="">
+								{ elmt['title'] }
+							</h5>
+							<h5 if={elmt['media_type']=="tv" } class="">
+								{ elmt['name'] }
+							</h5>
+							<h5 if={!elmt['media_type']} class="">
+								{ elmt['title'] }
+								{ elmt['name'] }
+							</h5>
+						</div>
+
+						<div class="bottom-half">
+							<!-- Date -->
+							<div if={elmt['media_type']=="movie" } class="">
+								{ elmt['release_date'] }
+							</div>
+							<div if={elmt['media_type']=="tv" } class="">
+								{ elmt['first_air_date'] }
+							</div>
+							<div if={!elmt['media_type']} class="">
+								{ elmt['release_date'] }
+								{ elmt['first_air_date'] }
+							</div>
+
+							<div class="">
+								<!-- Étoiles -->
+								<span>
+									<i class="etoile-on ligne-elt fas fa-star"></i>
+								</span>
+
+								<!-- Note -->
+								<div class="ligne-elt-right">
+									{ Math.round(elmt['vote_average'] * 10) / 10 }
+								</div>
+							</div>
+
+							<!-- Tags -->
+							<div class="tags">
+								<div each={ tag in this.props.genres[elmt['id']] } class="tag">{ tag }</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</a>
+		</div>
+	</div>
+
+	<script>
+		export default {
+			stars(note) {
+				let dico = []
+				for (let i = 1; i < 11; i++) {
+					dico.push(i <= note)
+				}
+				return dico
+			},
+			USdateToEUdate(date) {
+				let year = date.substring(0, 4)
+				let month = date.substring(5, 7)
+				let day = parseInt(date.substring(8, 10))
+
+				switch (month) {
+					case "01":
+						month = "janvier"
+						break
+					case "02":
+						month = "février"
+						break
+					case "03":
+						month = "mars"
+						break
+					case "04":
+						month = "avril"
+						break
+					case "05":
+						month = "mai"
+						break
+					case "06":
+						month = "juin"
+						break
+					case "07":
+						month = "juillet"
+						break
+					case "08":
+						month = "août"
+						break
+					case "09":
+						month = "septembre"
+						break
+					case "10":
+						month = "octobre"
+						break
+					case "11":
+						month = "novembre"
+						break
+					case "12":
+						month = "décembre"
+						break
+				}
+
+				return day + " " + month + " " + year
+
+			}
+		}
+	</script>
+</affiche>

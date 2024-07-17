@@ -1,0 +1,97 @@
+<pagination>
+    <p>
+    <nav class="page-nav">
+        <a each={num in this.getPages(this.props.current, this.props.max)} class={num[1]} id={num[2]}
+            onclick={pageChange}>{num[0]}</a>
+    </nav>
+    </p>
+
+    <script>
+        export default function accueillir() {
+            return {
+                getPages(current, max) {
+                    let res = []
+                    current = Number(current)
+                    max = Number(max)
+                    // bouton "page précédente"
+                    if (current == 1) {
+                        res.push(["<", "page-button-arrow-disabled", "1"])
+                    }
+                    else {
+                        res.push(["<", "page-button-arrow", current - 1])
+                    }
+                    // moins de 11 pages au total
+                    if (max < 11) {
+                        for (let i = 1; i <= max; i++) {
+                            if (i == current) {
+                                res.push([i, "page-button-current", i])
+                            }
+                            else {
+                                res.push([i, "page-button-number", i])
+                            }
+                        }
+                    }
+                    else if (current < 6) {
+                        for (let i = 1; i <= 7; i++) {
+                            if (i == current) {
+                                res.push([i, "page-button-current", i])
+                            }
+                            else {
+                                res.push([i, "page-button-number", i])
+                            }
+                        }
+                        res.push(["...", "page-button-filler"])
+                        res.push([max, "page-button-number", max])
+                        res.push([">", "page-button-arrow", (current + 1)])
+                        return res
+                    }
+                    else {
+                        res.push(["1", "page-button-number", "1"])
+                        res.push(["...", "page-button-filler"])
+
+                        if (current > max - 5) {
+                            for (let i = max - 6; i <= max; i++) {
+                                if (i == current) {
+                                    res.push([i, "page-button-current", i])
+                                }
+                                else {
+                                    res.push([i, "page-button-number", i])
+                                }
+                            }
+                        }
+                        // trop de page
+                        else {
+                            for (let i = current - 2; i <= current + 2; i++) {
+                                if (i == current) {
+                                    res.push([i, "page-button-current", i])
+                                }
+                                else {
+                                    res.push([i, "page-button-number", i])
+                                }
+                            }
+                            res.push(["...", "page-button-filler"])
+                            res.push([max, "page-button-number", max])
+                        }
+                    }
+                    // bouton "page suivante"
+                    if (current == max) {
+                        res.push([">", "page-button-arrow-disabled"])
+                    }
+                    else {
+                        res.push([">", "page-button-arrow", (current + 1)])
+                    }
+                    return res
+                },
+                pageChange(e) {
+					console.log(e.target.id + " target")
+                    window.history.pushState(null, null, this.props.place + e.target.id);
+					console.log(this.props.place + e.target.id + " target+place")
+                    this.props.current = e.target.id;
+                    this.props.updateParent(e.target.id);
+                    this.update()
+                }
+
+            }
+        }
+    </script>
+</pagination>

@@ -1,0 +1,781 @@
+:root {
+    /* Couleurs du thème */
+    /* appeler avec var(nom) */
+    --main-red: #620c0c;
+    --main-red-darker: hsl(0, 78%, 17%);
+    --title-red: #8c1919;
+    --country-tag: #f99696;
+    --link-red: #b62b2b;
+    --main-gold: #eeaf46;
+    --main-gold-lighter: hsl(38, 83%, 70%);
+    --tag-gold: #eec57f;
+    --pale-gold: #ffe8c2;
+    --text: #000000;
+    --grey: #b4b4b4;
+    --transparent-gold: rgba(238, 175, 70, 0);
+    --transparent-red: rgba(98, 12, 12, 0.1);
+    --transparent-black: rgba(0, 0, 0, 0.1);
+    --half-transparent-grey: rgba(180, 180, 180, 0.5);
+    --half-transparent-dark-grey: rgba(50, 50, 50, 0.65);
+    --half-transparent-black: rgba(0, 0, 0, 0.5);
+    --not-that-transparent-black: rgba(0, 0, 0, 0.9);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    margin-top: 60px;
+    margin-bottom: 60px;
+    color: var(--text);
+    font-size: 1em;
+    font-weight: 400;
+    line-height: 1.5;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* Liens */
+
+a {
+    color: var(--link-red);
+    text-decoration: none;
+}
+
+.partie {
+    margin-bottom: 5em;
+    margin-top: 1.5em;
+}
+
+.titre-partie {
+    text-align: center;
+    font-size: 2em;
+    font-weight: 600;
+}
+
+.titre-partie h1,
+h2,
+h3,
+h5 {
+    padding: 0;
+    margin: 0;
+}
+
+
+
+/* Écran */
+
+.ecran,
+.ecran-full {
+    background-repeat: no-repeat;
+    background-origin: content-box;
+    background-size: cover;
+    color: white;
+
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+
+    height: 7em;
+    width: 100%;
+
+    display: grid;
+    align-items: center;
+    text-align: center;
+
+    font-weight: 500;
+}
+
+.ecran {
+    font-size: 2em;
+    background-position: right 50% bottom 80%;
+}
+
+.ecran-full {
+    background-image: url(img/noimage.png);
+    background-position: top;
+    height: auto;
+}
+
+.ecran-full * {
+    padding: 1rem;
+}
+
+.description {
+    background-image: none;
+    color: black;
+}
+
+.description h5 {
+    color: black;
+}
+
+.right-side-thing {
+    text-align: left;
+    margin-left: 30rem;
+}
+
+.left-side-thing {
+    width: 24rem;
+    position: absolute;
+    padding: 0;
+    margin: 3rem;
+    text-align: left;
+}
+
+.left-side-thing * {
+    position: relative;
+}
+
+.left-side-thing .poster {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    height: 36em;
+    width: 24em;
+    overflow: visible;
+    box-shadow: 10px 10px 10px var(--half-transparent-black);
+}
+
+.side-part h3,
+h4 {
+    text-align: left;
+    padding: 0;
+    margin: 0;
+}
+
+.side-part h3 {
+    margin-bottom: 0.7rem;
+    margin-top: 0.7rem;
+    font-size: 2rem;
+}
+
+.side-part h4 {
+    margin-bottom: 0.4rem;
+    margin-top: 0.4rem;
+    font-size: 1.5rem;
+}
+
+.left-side-thing .side-part h3 {
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+    margin-top: 1em;
+}
+
+.right-side-thing .side-part h3 {
+    margin-bottom: 1rem;
+}
+
+.side-part {
+    text-align: left;
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+    color: black;
+}
+
+.video iframe,
+.video object,
+.video embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.video {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    margin-left: 1em;
+    border-radius: 10px;
+}
+
+.corps {
+    margin-left: 2em;
+    margin-right: 2em;
+}
+
+
+
+
+
+
+
+
+/* Bannière */
+
+.banniere {
+    background-color: var(--main-red);
+    color: var(--main-gold);
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9;
+    margin: 0;
+
+    display: inline-flex;
+    align-items: center;
+    height: 60px;
+    width: 100%;
+    justify-content: space-between;
+
+    font-size: 1.2em;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.banniere a {
+    color: var(--main-gold);
+}
+
+.banniere-contenu {
+    padding: 0.4em;
+
+    margin: 0.3em;
+
+    border-radius: 5px;
+}
+
+.banniere-contenu:hover {
+    color: var(--main-gold-lighter);
+    background-color: var(--main-red-darker);
+}
+
+.banniere-left {
+    margin-left: 1.5em;
+    justify-content: block-start;
+}
+
+.banniere-right {
+    margin-right: 1.5em;
+    justify-content: block-end;
+}
+
+
+/* Champ de recherche */
+
+.recherche {
+    display: inline-flex;
+}
+
+.recherche input {
+    background-color: white;
+    color: var(--text);
+
+    padding: 0.5em;
+    padding-left: 0.8em;
+    font-size: 0.7em;
+
+    height: 100%;
+    border: 1.5px solid var(--main-gold);
+    border-right: none;
+    border-radius: 5px 0px 0px 5px;
+}
+
+.recherche input:focus {
+    outline: none;
+    border-color: var(--main-gold-lighter);
+
+    cursor: text;
+}
+
+.recherche button {
+    background-color: var(--main-gold);
+    color: white;
+
+    padding: 0.5em;
+    font-size: 0.7em;
+
+    height: 100%;
+    border: 1.5px solid var(--main-gold);
+    border-radius: 0px 5px 5px 0px;
+}
+
+.recherche button:hover {
+    background-color: var(--main-gold-lighter);
+    border-color: var(--main-gold-lighter);
+    cursor: pointer;
+}
+
+
+
+
+
+
+
+/* utilisé pour les étoiles (met plein d'éléments sur la même ligne) */
+.ligne-elt {
+    display: inline;
+    box-sizing: border-box;
+    padding: 0;
+}
+
+.ligne-elt-left {
+
+    display: inline;
+    box-sizing: border-box;
+    padding-right: 0.5em;
+}
+
+.ligne-elt-right {
+    display: inline;
+    box-sizing: border-box;
+    padding-left: 0.5em;
+}
+
+.etoile-on {
+    color: var(--main-gold);
+}
+
+.etoile-off {
+    color: var(--grey);
+}
+
+.tags {
+    display: inline-flex;
+    align-items: center;
+    justify-items: center;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+}
+
+.tag {
+    margin: 0.5em;
+    padding: 0.2em 0.7em;
+
+    font-size: 0.8em;
+    background-color: var(--pale-gold);
+    color: var(--text);
+    border: 1px solid var(--tag-gold);
+    border-radius: 25px;
+    flex-wrap: wrap;
+    overflow-wrap: break-all;
+    white-space-collapse: collapse;
+}
+
+.tag-on {
+    background-color: var(--pale-gold);
+    cursor: pointer;
+}
+
+.tag-off {
+    background-color: white;
+    cursor: pointer;
+}
+
+
+
+
+/* Affiches */
+
+/* Affiches normal */
+
+.slider {
+    overflow-x: auto;
+}
+
+.affiche-bloc {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    text-align: center;
+
+    flex-wrap: wrap;
+}
+
+.affiche-ligne {
+    /*overflow-x: scroll; LE MAUX DE NOS SOUCIS*/
+    overflow-y: visible;
+    display: flex;
+
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    width: 100%;
+    height: 24em;
+}
+
+.headshot-bloc {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    text-align: center;
+
+    flex-wrap: wrap;
+}
+
+.headshot-ligne {
+    overflow-y: visible;
+    display: flex;
+
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.affiche-ligne a,
+.affiche-bloc a,
+.headshot-ligne a,
+.headshot-bloc a {
+    color: var(--text);
+}
+
+.affiche {
+    margin: 0.7em 0.5em;
+
+    display: flex;
+    align-items: flex-end;
+    justify-items: stretch;
+
+    margin-right: 1em;
+    flex: 0 0 auto;
+    position: relative;
+
+    margin-top: 1.2em;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px var(--half-transparent-grey);
+    border: 1px solid var(--half-transparent-grey);
+    height: 21em;
+    width: 14em;
+
+}
+
+.poster {
+    background-position: center center;
+    background-origin: content-box;
+    background-clip: content-box;
+    background-repeat: no-repeat;
+    border-radius: 10px;
+
+    background-size: 100% 100%;
+
+    overflow: hidden;
+    height: 21em;
+    width: 100%;
+
+    position: absolute;
+}
+
+.titre {
+
+    background-image: linear-gradient(to top, var(--text), 75%, var(--transparent-black));
+    color: white;
+    width: 100%;
+    border-radius: 0 0 10px 10px;
+
+    z-index: 2;
+    overflow: hidden;
+
+    font-size: 1.2em;
+    font-weight: bold;
+    word-wrap: break-word;
+}
+
+.titre * {
+    text-align: left;
+}
+
+.titre h5 {
+    margin: 1em 1.5em;
+}
+
+.headshot {
+    width: 11rem;
+    box-shadow: 5px 5px 5px var(--half-transparent-grey);
+    border-radius: 10px;
+    border: 1px solid var(--half-transparent-grey);
+    background-color: white;
+
+    margin-bottom: 1em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+.headshot img {
+    height: 16.5rem;
+    width: 11rem;
+
+    z-index: 1;
+    box-shadow:
+        0px 5px 5px var(--half-transparent-grey);
+}
+
+.headshot .legend {
+    width: 100%;
+    height: auto;
+    font-size: 0.8rem;
+    text-align: left;
+    padding: 0.3em 1em;
+    padding-bottom: 0.9em;
+}
+
+.headshot h6 {
+    font-size: 0.9rem;
+    padding: 0;
+    margin: 0;
+}
+
+
+
+
+
+/* Affiches overlay */
+
+.affiche:hover .overlay {
+    display: inline-flex;
+
+    transform: scale(1.1) translate(-25%);
+    -ms-transform: scale(1.1) translate(-25%);
+
+}
+
+.overlay {
+    display: none;
+    box-shadow:
+        5px 5px 5px var(--half-transparent-grey) inset,
+        5px 5px 5px var(--half-transparent-grey);
+    border-radius: 10px;
+    border: 1px solid var(--half-transparent-grey);
+    background-color: white;
+    z-index: 4;
+
+    position: absolute;
+    margin: 0;
+    width: 28em;
+
+    align-self: center;
+    white-space: pre;
+    text-align: center;
+    word-wrap: break-word;
+    flex-wrap: wrap;
+
+    transition: display 2s;
+
+}
+
+.poster-over {
+    background-position: center center;
+    background-origin: content-box;
+    background-clip: content-box;
+    background-repeat: no-repeat;
+
+    height: 21em;
+    width: 14em;
+    background-size: 100% 100%;
+
+    display: flex;
+    align-items: flex-end;
+    justify-items: stretch;
+    box-sizing: border-box;
+
+    box-shadow:
+        5px 5px 5px var(--half-transparent-grey) inset,
+        3px 0px 3px var(--half-transparent-grey);
+    border-radius: 10px 0px 0px 10px;
+}
+
+
+.info {
+    white-space: normal;
+    height: 21em;
+    width: 14em;
+    padding: 1em;
+    box-sizing: border-box;
+
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow-y: scroll;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    justify-items: center;
+    align-items: stretch;
+}
+
+.info::-webkit-scrollbar {
+    display: none;
+}
+
+.titre-over {
+    align-items: center;
+    justify-items: center;
+    box-sizing: border-box;
+
+    align-self: center;
+    text-align: center;
+    word-wrap: break-word;
+    color: var(--title-red);
+    font-size: 2em;
+    font-weight: bold;
+    display: inline-flex;
+    flex-wrap: wrap;
+    padding-bottom: 1em;
+}
+
+.bottom-half {
+    align-self: center;
+    display: grid;
+}
+
+.bottom-half>div {
+    padding-bottom: 1em;
+}
+
+
+
+
+/* Menu de filtre */
+
+.filters-container {
+    padding-top: 3em;
+    padding-bottom: 1em;
+    align-items: center;
+    text-align: center;
+    margin-right: 3em;
+    margin-left: 3em;
+
+}
+
+.filters {
+    list-style: none;
+    width: 100%;
+
+    display: flex;
+    align-items: sretch;
+    align-content: space-between;
+    justify-items: stretch;
+    justify-content: space-around;
+    margin-bottom: 0.7em;
+}
+
+.filter {
+    font-size: 1.3em;
+    font-weight: 500;
+    line-height: 1;
+
+    text-decoration: none;
+    color: var(--main-red);
+    text-align: center;
+    vertical-align: sub;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--main-red);
+    width: 100%;
+    background-color: none;
+
+    cursor: pointer;
+}
+
+.filter:hover {
+    border-bottom: 4px solid var(--main-red);
+}
+
+.filters .selected {
+    border-bottom: 4px solid var(--main-gold);
+    color: var(--main-gold);
+}
+
+/*.overlap-box {
+    position: absolute;
+    top: 4em;
+    left: 2em;
+    border-radius: 10px;
+
+    z-index: 3;
+
+    box-shadow: 0 0 18px black;
+}
+
+.overlap-box * {
+    position: static;
+    height: 18em;
+    width: 12em;
+}
+*/
+
+.titre-grand,
+.titre-grand h5 {
+    color: white;
+    font-size: 3em;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.sous-titre,
+.sous-titre .tags {
+    margin-top: -1em;
+    margin-bottom: -1em;
+    padding-top: 0;
+}
+
+.sous-titre {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.darken {
+    background-color: var(--half-transparent-dark-grey);
+    width: 100%;
+    height: 100%;
+    margin-top: 1em;
+    margin-bottom: 1em;
+
+    z-index: 1;
+    padding: 0;
+}
+
+
+
+/* Navigation des pages */
+.page-nav {
+    text-align: center;
+    align-items: center;
+}
+
+.page-nav * {
+    padding: 0.5em 1em;
+    display: inline-block;
+}
+
+.page-nav a {
+    font-size: 0.8em;
+    cursor: default;
+}
+
+.page-button-arrow {
+    background-color: var(--main-gold);
+}
+
+.page-button-arrow-disabled {
+    background-color: var(--grey);
+}
+
+.page-button-arrow,
+.page-button-arrow-disabled {
+    color: white;
+}
+
+.page-button-number,
+.page-button-filler {
+    background-color: white;
+    color: var(--text);
+}
+
+.page-button-current {
+    background-color: var(--main-gold);
+    color: white;
+}
+
+.page-button-arrow:hover {
+    cursor: pointer;
+    filter: brightness(90%);
+}
+
+.page-button-number:hover {
+    filter: brightness(90%);
+    cursor: pointer;
+}

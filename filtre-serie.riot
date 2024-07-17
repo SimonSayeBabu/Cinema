@@ -1,0 +1,203 @@
+<filterserie>
+  <!-- Corps -->
+  <div class="corps">
+    <!-- filtres -->
+    <div class="filters-container">
+      <div class="filters">
+        <div id="trend" class={ state.sortBy=='trend' ? 'selected filter' :'filter' } onclick={sortBy}>
+          Tendances</div>
+        <div id="today" class={ state.sortBy=='today' ? 'selected filter' :'filter' } onclick={sortBy}>
+          Aujourd'hui</div>
+        <div id="week" class={ state.sortBy=='week' ? 'selected filter' :'filter' } onclick={sortBy}>
+          En cours de diffusion</div>
+        <div id="top" class={ state.sortBy=='top' ? 'selected filter' :'filter' } onclick={sortBy}>
+          Meilleures notes</div>
+      </div>
+      <!-- Tags 
+      <div class="tags">
+        <div each={ tag in state.filtertags } onclick={toggleTag} class="tag tag-off" id={ tag['id'] } }>{
+          tag['name'] }
+        </div>
+      </div>-->
+    </div>
+    <div class="partie">
+      <affiche content="{this.state.serie}" genres="{this.state.genres}" media="tv" ligne_bloc="affiche-bloc"></affiche>
+    </div>
+  </div>
+
+  <pagination current="{this.state.currentPage}" max="{this.state.maxPage}" place="#/serie/{this.state.sortBy}/"
+    updateParent="{ updateParent }">
+  </pagination>
+
+  <script>
+    export default function accueillir() {
+      base: 'https://dwarves.iut-fbleau.fr/~sayebabu/cinema/'
+      return {
+        async onBeforeMount(props, state) {
+          // initial state
+          this.state = {
+            serie: [],
+            currentPage: props.page,
+            maxPage: 0,
+            filtertags: [],
+            sortBy: props.tag,
+            toggledtags: [],
+            genres: {}
+          }
+          await this.setfiltertags()
+          if (this.state.sortBy == 'today') {
+            await this.setTodayTV()
+          }
+          else if (this.state.sortBy == 'week') {
+            await this.setWeekTV()
+          }
+          else if (this.state.sortBy == 'top') {
+            await this.setTopTV()
+          }
+          else {
+            await this.setTrendTV()
+          }
+          await this.setGenre()
+          console.log(this.state.currentPage)
+        },
+        edit(e) {
+          // update only the text state
+          this.update({
+            text: e.target.value
+          })
+        },
+        search(e) {
+
+        },
+        stars(note) {
+          let dico = []
+
+          for (let i = 1; i < 11; i++) {
+            dico.push(i <= note)
+          }
+
+          return dico
+        },
+        toggleTag(e) {
+          if (this.state.toggledtags.includes(e.target.id)) {
+            e.target.classList.remove("tag-on")
+            e.target.classList.add("tag-off")
+            this.state.toggledtags.splice(this.state.toggledtags.indexOf(e.target.id), 1)
+          }
+          else {
+            e.target.classList.add("tag-on")
+            e.target.classList.remove("tag-off")
+            this.state.toggledtags.push(e.target.id)
+          }
+          this.update()
+        },
+        async sortBy(e) {
+          let id = e.target.id
+          if (this.state.sortBy == id) {
+            return
+          }
+          this.state.sortBy = id
+          this.state.currentPage = 1;
+          window.history.pushState(null, null, "#/serie/" + id)
+          if (id == 'trend') {
+            await this.setTrendTV()
+          }
+          else if (id == 'today') {
+            await this.setTodayTV()
+          }
+          else if (id == 'week') {
+            await this.setWeekTV()
+          }
+          else if (id == 'top') {
+            await this.setTopTV()
+          }
+          await this.setGenre()
+          this.update()
+          return true
+        },
+        async setTrendTV() {
+          let api = apiManager()
+          let temp = await api.trendTV(this.state.currentPage)
+          console.log(this.state.currentPage)
+          this.state['serie'] = temp["results"]
+          if (temp["total_pages"] > 500) {
+            this.state.maxPage = 500
+          }
+          else {
+            this.state.maxPage = temp["total_pages"]
+          }
+          this.update()
+        },
+        async setTodayTV() {
+          let api = apiManager()
+          let temp = await api.todayTV(this.state.currentPage)
+          this.state['serie'] = temp["results"]
+          if (temp["total_pages"] > 500) {
+            this.state.maxPage = 500
+          }
+          else {
+            this.state.maxPage = temp["total_pages"]
+          }
+          this.update()
+        },
+        async setWeekTV() {
+          let api = apiManager()
+          let temp = await api.weekTV(this.state.currentPage)
+          this.state['serie'] = temp["results"]
+          if (temp["total_pages"] > 500) {
+            this.state.maxPage = 500
+          }
+          else {
+            this.state.maxPage = temp["total_pages"]
+          }
+          this.update()
+        },
+        async setTopTV() {
+          let api = apiManager()
+          let temp = await api.topTV(this.state.currentPage)
+          this.state['serie'] = temp["results"]
+          if (temp["total_pages"] > 500) {
+            this.state.maxPage = 500
+          }
+          else {
+            this.state.maxPage = temp["total_pages"]
+          }
+          this.update()
+        },
+        async setGenre() {
+          let api = apiManager()
+          for (let tv of this.state['serie']) {
+            let serie = await api.getTV(tv['id']);
+            let genres = serie['genres'].map(genre => genre['name']);
+            this.state.genres[tv['id']] = genres;
+          }
+          this.update();
+        },
+        async setfiltertags() {
+          let api = apiManager()
+          let temp = await api.getTagsTV()
+          this.state['filtertags'] = temp['genres']
+          this.update()
+        },
+        async updateParent(page) {
+          this.state.currentPage = page
+          if (this.state.sortBy == 'today') {
+            await this.setTodayTV()
+          }
+          else if (this.state.sortBy == 'week') {
+            await this.setWeekTV()
+          }
+          else if (this.state.sortBy == 'top') {
+            await this.setTopTV()
+          }
+          else {
+            await this.setTrendTV()
+          }
+          await this.setGenre()
+          this.update()
+          console.log("done")
+        }
+      }
+    }
+  </script>
+</filterserie>

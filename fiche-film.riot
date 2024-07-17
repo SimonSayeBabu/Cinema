@@ -1,0 +1,276 @@
+<fichefilm>
+	<div class="ecran-full" style={this.getStyle()}>
+		<!-- Titre {console.log(this.state.content)}-->
+		<div class="darken">
+			<div class="left-side-thing">
+				<div if={!!this.state.content['poster_path']} class="poster"
+					style="background-image: url(https://image.tmdb.org/t/p/original/{this.state.content['poster_path']});">
+				</div>
+				<div if={!this.state.content['poster_path']} class="poster"
+					style="background-image: url(img/noaffiche.png);">
+				</div>
+
+
+				<div class="side-part">
+					<!-- vote_count -->
+					<div class="ligne-elt">
+						{this.state.content['vote_count']} votes
+					</div>
+					<!-- vote_average -->
+					<span>
+						<i each={ star in stars( Math.round(this.state.content['vote_average'])) }
+							class="{ star ?  'etoile-on' : 'etoile-off' } ligne-elt fas fa-star"></i>
+					</span>
+					<div class="ligne-elt">
+						{ Math.round(this.state.content['vote_average'] * 10) / 10 }
+					</div>
+
+					<h3>Production</h3>
+					{this.state.content['production_companies'][0]['name']}
+					<h3>Budget</h3>
+					{this.state.content['budget']}
+					<h3>Revenu</h3>
+					{this.state.content['revenue']}
+				</div>
+
+			</div>
+			<div class="right-side-thing">
+
+				<!-- title -->
+				<h5 if={this.props.type=="movie" } class="titre-grand">
+					{ this.state.content['title'] }
+				</h5>
+				<h5 if={this.props.type=="tv" } class="titre-grand">
+					{ this.state.content['name'] }
+				</h5>
+				<h5 if={!this.props.type} class="titre-grand">
+					{ this.state.content['title'] }
+					{ this.state.content['name'] }
+				</h5>
+
+
+				<!-- runtime & production_countries & release date & status-->
+				<div class="sous-titre">
+					<div if={this.state.type=='movie' }>
+						{ minutesToHours(this.state.content['runtime']) } &nbsp; - &nbsp;
+						{this.state.content['production_countries'][0]['name']} &nbsp; - &nbsp; {
+						USdateToEUdate(this.state.content['release_date'], this.state.content['status']) }
+					</div>
+					<div if={this.state.type=='tv' }>
+						{ seasonToString(this.state.content['number_of_seasons'],
+						this.state.content['number_of_episodes']) }
+						&nbsp; - &nbsp; {this.state.content['production_countries'][0]['name']} &nbsp; - &nbsp; {
+						USdateToEUdate(this.state.content['first_air_date'], this.state.content['status']) }
+					</div>
+					<div class="tags">
+						<!-- genres -->
+						<div each={tag in this.state.content['genres']} class="tag">{tag['name']}</div>
+					</div>
+				</div>
+
+
+
+				<!-- overview -->
+				<div class="long-text">
+					{this.state.content['overview']}
+				</div>
+
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Corps -->
+	<div class="corps">
+		<div class="right-side-thing">
+			<div class="side-part">
+				<!-- Titre de partie -->
+				<h3 class="">Bande-annonce</h3>
+				<div class="video">
+					<iframe src="{this.state.video}" frameborder="0" allowfullscreen></iframe>
+				</div>
+			</div>
+
+
+			<div class="side-part">
+				<!-- Titre de partie -->
+				<h3 class="">Distribution</h3>
+				<!-- Affiches -->
+				<personne content="{this.state.cast}" ligne_bloc="headshot-ligne"></personne>
+
+				<h3 class="">Production</h3>
+				<!-- Affiches -->
+				<personne content="{this.state.prod}" ligne_bloc="headshot-ligne"></personne>
+			</div>
+		</div>
+
+
+	</div>
+
+	<script>
+		export default function accueillir() {
+			return {
+				async onBeforeMount(props, state) {
+					this.state = {
+						content: {},
+						id: this.props.id,
+						type: this.props.type,
+						video: "",
+						cast: [],
+						prod: []
+					}
+					await this.getContent(this.state.type)
+					console.log(this.state.content)
+				},
+				async getContent(media_type) {
+					let api = apiManager()
+					if (this.state.type == "movie") {
+						this.state['content'] = await api.getMovie(this.state.id)
+					}
+					else if (this.state.type == "tv") {
+						this.state['content'] = await api.getTV(this.state.id)
+					}
+					await this.getVideo()
+					await this.getCast()
+					this.update()
+				},
+				async getVideo() {
+					let api = apiManager()
+					let temp = []
+					if (this.state.type == "movie") {
+						temp = await api.getMovieVideo(this.state.id)
+					}
+					else if (this.state.type == "tv") {
+						temp = await api.getTvVideo(this.state.id)
+					}
+					if (temp['results'].length < 1) { //missing
+						temp = "https://www.youtube.com/embed/dQw4w9WgXcQ"
+					}
+					else {
+						temp = String("https://www.youtube.com/embed/" + temp['results'][0]['key'])
+					}
+					this.state['video'] = temp
+				},
+				async getCast() {
+					let api = apiManager()
+					let temp = []
+					if (this.state.type == "movie") {
+						temp = await api.getMovieCredits(this.state.id)
+					}
+					else if (this.state.type == "tv") {
+						temp = await api.getTvCredits(this.state.id)
+					}
+					this.state['cast'] = temp['cast']
+					this.state['prod'] = temp['crew']
+				},
+				edit(e) {
+					// update only the text state
+					this.update({
+						text: e.target.value
+					})
+				},
+				getStyle: function() {
+					if (this.state.content['backdrop_path']) {
+						return "background-image: url(https://image.tmdb.org/t/p/original/" + this.state.content['backdrop_path'] + ")";
+					} else {
+						return "background-image: url(img/noimage.png)";
+					}
+				},
+				search(e) {
+
+				},
+				stars(note) {
+					let dico = []
+
+					for (let i = 1; i < 11; i++) {
+						dico.push(i <= note)
+					}
+
+					return dico
+				},
+				minutesToHours(time) {
+					let minutes = time % 60
+					let hours = (time - minutes) / 60
+					if (minutes < 10) {
+						return hours + "h" + "0" + minutes
+					}
+					else {
+						return hours + "h" + minutes
+					}
+				},
+				USdateToEUdate(date, status) {
+					if (status != "Released" || status != "Returning Series") {
+						return "À venir"
+					}
+
+					let year = date.substring(0, 4)
+					let month = date.substring(5, 7)
+					let day = parseInt(date.substring(8, 10))
+
+					switch (month) {
+						case "01":
+							month = "janvier"
+							break
+						case "02":
+							month = "février"
+							break
+						case "03":
+							month = "mars"
+							break
+						case "04":
+							month = "avril"
+							break
+						case "05":
+							month = "mai"
+							break
+						case "06":
+							month = "juin"
+							break
+						case "07":
+							month = "juillet"
+							break
+						case "08":
+							month = "août"
+							break
+						case "09":
+							month = "septembre"
+							break
+						case "10":
+							month = "octobre"
+							break
+						case "11":
+							month = "novembre"
+							break
+						case "12":
+							month = "décembre"
+							break
+					}
+
+					return day + " " + month + " " + year
+				},
+				seasonToString(saison, episode) {
+					saison = Number(saison)
+					episode = Number(episode)
+
+					res = saison + " saison"
+
+					if (saison > 1) {
+						res = res + "s"
+					}
+					res = res + ", " + episode + " épisode"
+					if (episode > 1) {
+						res = res + "s"
+					}
+					return res
+				},
+				getYears(dateDebut, dateFin, enCours) {
+					let deb = dateDebut.substring(0, 4)
+					if (enCours == "Returning Series") {
+						return deb + " - Ajourd'hui"
+					}
+					return deb + " - " + dateFin.substring(0, 4)
+				}
+			}
+		}
+	</script>
+</fichefilm>

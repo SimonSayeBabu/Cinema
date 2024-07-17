@@ -1,0 +1,110 @@
+<accueil>
+    <!-- Écran : image avec texte animé et recherche -->
+    <screen content="{this.state.filmTREND}"></screen>
+    <!-- Corps -->
+    <div class="corps">
+        <div class="partie">
+            <!-- Titre de partie -->
+            <h3 class="titre-partie">Films en tendances</h3>
+            <!-- Affiches -->
+            <affiche content="{this.state.filmTREND}" genres="{this.state.genresMovie}" media="movie"
+                ligne_bloc="affiche-ligne">
+            </affiche>
+        </div>
+
+        <div class="partie">
+            <!-- Titre de partie -->
+            <h3 class="titre-partie">Films populaires</h3>
+            <!-- Affiches -->
+            <affiche content="{this.state.filmPOP}" genres="{this.state.genresMovie}" media="movie"
+                ligne_bloc="affiche-ligne">
+            </affiche>
+        </div>
+
+        <div class="partie">
+            <!-- Titre de partie -->
+            <h3 class="titre-partie">Séries en tendances</h3>
+            <!-- Affiches -->
+            <affiche content="{this.state.tvTrend}" genres="{this.state.genresTV}" media="tv"
+                ligne_bloc="affiche-ligne">
+            </affiche>
+        </div>
+
+        <div class="partie">
+            <!-- Titre de partie -->
+            <h3 class="titre-partie">Séries populaires</h3>
+            <!-- Affiches -->
+            <affiche content="{this.state.tvPOP}" genres="{this.state.genresTV}" media="tv" ligne_bloc="affiche-ligne">
+            </affiche>
+        </div>
+    </div>
+    <script>
+
+
+
+        export default function accueillir() {
+            //lien vers l'index
+            base: 'https://dwarves.iut-fbleau.fr/~sayebabu/cinema/'
+            return {
+                async onBeforeMount(props, state) {
+                    // initial state
+                    this.state = {
+                        films: props.films,
+                        text: '',
+                        filmTREND: [],
+                        filmPOP: [],
+                        tvTrend: [],
+                        tvPOP: [],
+                        genresMovie: {},
+                        genresTV: {}
+                    }
+                    await this.setTrendMovie()
+                    await this.setPopMovie()
+                    await this.setPopTV()
+                    await this.setTrendTV()
+                    await this.setGenre()
+                },
+                async setTrendMovie() {
+                    let api = apiManager()
+                    let temp = await api.trendMovie(1)
+                    this.state['filmTREND'] = temp["results"].slice(0, 10)
+                    console.log(temp)
+                    this.update()
+                },
+                async setPopMovie() {
+                    let api = apiManager()
+                    let temp = await api.popMovie(1)
+                    this.state['filmPOP'] = temp["results"].slice(0, 10)
+                    console.log(temp)
+                    this.update()
+                },
+                async setTrendTV() {
+                    let api = apiManager()
+                    let temp = await api.trendTV(1)
+                    this.state['tvTrend'] = temp["results"].slice(0, 10)
+                    this.update()
+                },
+                async setPopTV() {
+                    let api = apiManager()
+                    let temp = await api.popTV(1)
+                    this.state['tvPOP'] = temp["results"].slice(0, 10)
+                    this.update()
+                },
+                async setGenre() {
+                    let api = apiManager()
+                    for (let elmt of this.state['filmPOP'].concat(this.state['filmTREND'])) {
+                        let movie = await api.getMovie(elmt['id']);
+                        let genresMovie = movie['genres'].map(genresMovie => genresMovie['name']);
+                        this.state.genresMovie[elmt['id']] = genresMovie;
+                    }
+                    for (let elmt of this.state['tvTrend'].concat(this.state['tvPOP'])) {
+                        let tv = await api.getTV(elmt['id']);
+                        let genresTV = tv['genres'].map(genresTV => genresTV['name']);
+                        this.state.genresTV[elmt['id']] = genresTV;
+                    }
+                    this.update();
+                }
+            }
+        }
+    </script>
+</accueil>

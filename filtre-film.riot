@@ -1,0 +1,189 @@
+<filterfilm>
+    <!-- Corps -->
+    <div class="corps">
+        <!-- filtres -->
+        <div class="filters-container">
+            <div class="filters">
+                <div id="trend" class={ state.sortBy=='trend' ? 'selected filter' :'filter' } onclick={sortBy}>
+                    Tendances</div>
+                <div id="last" class={ state.sortBy=='last' ? 'selected filter' :'filter' } onclick={sortBy}>
+                    Films à venir</div>
+                <div id="pop" class={ state.sortBy=='pop' ? 'selected filter' :'filter' } onclick={sortBy}>
+                    Populaires</div>
+                <div id="best" class={ state.sortBy=='best' ? 'selected filter' :'filter' } onclick={sortBy}>
+                    Meilleures notes</div>
+            </div>
+        </div>
+        <div class="partie">
+            <affiche content="{this.state.film}" genres="{this.state.genres}" media="movie" ligne_bloc="affiche-bloc">
+            </affiche>
+        </div>
+
+        <pagination current="{this.state.currentPage}" max="{this.state.maxPage}" place="#/film/{this.state.sortBy}/"
+            updateParent="{ updateParent }">
+        </pagination>
+
+    </div>
+
+    <script>
+        export default function accueillir() {
+            base: 'https://dwarves.iut-fbleau.fr/~sayebabu/cinema/'
+            return {
+                async onBeforeMount(props, state) {
+                    // initial state
+                    this.state = {
+                        film: [],
+                        currentPage: props.page,
+                        maxPage: 0,
+                        filtertags: [],
+                        sortBy: props.tag,
+                        toggledtags: [],
+                        genres: {}
+                    }
+                    await this.setfiltertags()
+                    if (this.state.sortBy == 'last') {
+                        await this.setUpcomingMovie()
+                    }
+                    else if (this.state.sortBy == 'pop') {
+                        await this.setPopMovie()
+                    }
+                    else if (this.state.sortBy == 'best') {
+                        await this.setBestMovie()
+                    }
+                    else {
+                        await this.setTrendMovie()
+                    }
+                    await this.setGenre()
+                },
+                edit(e) {
+                    // update only the text state
+                    this.update({
+                        text: e.target.value
+                    })
+                },
+                search(e) {
+
+                },
+                toggleTag(e) {
+                    if (this.state.toggledtags.includes(e.target.id)) {
+                        e.target.classList.remove("tag-on")
+                        e.target.classList.add("tag-off")
+                        this.state.toggledtags.splice(this.state.toggledtags.indexOf(e.target.id), 1)
+                    }
+                    else {
+                        e.target.classList.add("tag-on")
+                        e.target.classList.remove("tag-off")
+                        this.state.toggledtags.push(e.target.id)
+                    }
+                    this.update()
+                },
+                async sortBy(e) {
+                    let id = e.target.id
+                    if (this.state.sortBy == id) {
+                        return
+                    }
+                    this.state.sortBy = id
+                    this.state.currentPage = 1;
+                    window.history.pushState(null, null, "#/film/" + id)
+                    if (id == 'trend') {
+                        await this.setTrendMovie()
+                    }
+                    else if (id == 'last') {
+                        await this.setUpcomingMovie()
+                    }
+                    else if (id == 'pop') {
+                        await this.setPopMovie()
+                    }
+                    else if (id == 'best') {
+                        await this.setBestMovie()
+                    }
+                    await this.setGenre()
+                    this.update()
+                    return true
+                },
+                async setTrendMovie() {
+                    let api = apiManager()
+                    let temp = await api.trendMovie(this.state.currentPage)
+                    this.state['film'] = temp["results"]
+                    if (temp["total_pages"] > 500) {
+                        this.state.maxPage = 500
+                    }
+                    else {
+                        this.state.maxPage = temp["total_pages"]
+                    }
+                    this.update()
+                },
+                async setUpcomingMovie() {
+                    let api = apiManager()
+                    let temp = await api.upcomingMovie(this.state.currentPage)
+                    this.state['film'] = temp["results"]
+                    if (temp["total_pages"] > 500) {
+                        this.state.maxPage = 500
+                    }
+                    else {
+                        this.state.maxPage = temp["total_pages"]
+                    }
+                    this.update()
+                },
+                async setPopMovie() {
+                    let api = apiManager()
+                    let temp = await api.popMovie(this.state.currentPage)
+                    this.state['film'] = temp["results"]
+                    if (temp["total_pages"] > 500) {
+                        this.state.maxPage = 500
+                    }
+                    else {
+                        this.state.maxPage = temp["total_pages"]
+                    }
+                    this.update()
+                },
+                async setBestMovie() {
+                    let api = apiManager()
+                    let temp = await api.topMovie(this.state.currentPage)
+                    this.state['film'] = temp["results"]
+                    if (temp["total_pages"] > 500) {
+                        this.state.maxPage = 500
+                    }
+                    else {
+                        this.state.maxPage = temp["total_pages"]
+                    }
+                    this.update()
+                },
+                async setGenre() {
+                    let api = apiManager()
+                    for (let film of this.state['film']) {
+                        let movie = await api.getMovie(film['id']);
+                        let genres = movie['genres'].map(genre => genre['name']);
+                        this.state.genres[film['id']] = genres;
+                    }
+                    this.update();
+                },
+                async setfiltertags() {
+                    let api = apiManager()
+                    let temp = await api.getTagsMovie()
+                    this.state['filtertags'] = temp['genres']
+                    this.update()
+                },
+                async updateParent(page) {
+                    this.state.currentPage = page
+                    if (this.state.sortBy == 'last') {
+                        await this.setUpcomingMovie()
+                    }
+                    else if (this.state.sortBy == 'pop') {
+                        await this.setPopMovie()
+                    }
+                    else if (this.state.sortBy == 'best') {
+                        await this.setBestMovie()
+                    }
+                    else {
+                        await this.setTrendMovie()
+                    }
+                    await this.setGenre()
+                    this.update()
+                    console.log("done")
+                }
+
+            }
+        }
+    </script>
+</filterfilm>

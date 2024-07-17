@@ -1,0 +1,59 @@
+<header-custom class="banniere">
+    <nav class="banniere-left">
+        <!-- Petite maison -->
+        <a href="" class="banniere-contenu">
+            <span class="icon">
+                <i class="fas fa-home"></i>
+            </span>
+        </a>
+
+        <!-- Onglet Films -->
+        <a href="#/film/trend" class="banniere-contenu">
+            <span class="">
+                <span>
+                    Films
+                </span>
+            </span>
+        </a>
+
+        <!-- Onglet Séries -->
+        <a href="#/serie/trend" class="banniere-contenu">
+            <span class="">
+                <span>
+                    Séries
+                </span>
+            </span>
+        </a>
+    </nav>
+
+    <div class="banniere-right">
+        <div class="banniere-contenu">
+            <div class="recherche">
+
+                <!-- Champ -->
+                <input oninput={ edit } id="query" name="query" type="text" placeholder="Films, séries, artistes..." text={this.state.search}>
+
+                <!-- Petite loupe -->
+                <button onclick={pageChange} class="">
+                    <span class="icon">
+                        <i class="fas fa-search"></i>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        export default {
+            pageChange(e) {
+                window.history.pushState(null, null, "#/search/movie/search=" + this.state.search + "/1");
+                location.reload();
+            },
+			edit(e) {
+				this.update({
+					search: e.target.value
+				})
+			}
+        }
+    </script>
+</header-custom>

@@ -1,0 +1,51 @@
+<main>
+    <router base={base}>
+        <!--Navigation en haut de page-->
+        <header-custom></header-custom>
+
+        <!-- Accueil -->
+        <route path="(#)?">
+            <accueil></accueil>
+        </route>
+
+        <route path="#/film/:tag?/:page?">
+            <filterfilm tag="{route.params.tag||'trend'}" page="{route.params.page||1}">
+
+            </filterfilm>
+        </route>
+
+        <route path="#/serie/:tag?/:page?">
+            <filterserie tag="{route.params.tag||'trend'}" page="{route.params.page||1}">
+
+            </filterserie>
+        </route>
+
+        <route path="#/person/:id?">
+            <ficheartiste id="{route.params.id||-1}">
+            </ficheartiste>
+        </route>
+
+        <route path="#/fiche/:type?/:id?">
+            <fichefilm if={route.params.type!="person" } type="{route.params.type}" id="{route.params.id||-1}">
+            </fichefilm>
+        </route>
+
+        <route path="#/search/:type?/:search?/:page?">
+            <recherche type={route.params.type||"movie"} search={route.params.search||"none"}
+                page={route.params.page||"1"}>
+            </recherche>
+        </route>
+
+    </router>
+
+    <script>
+
+        export default {
+            base: 'https://dwarves.iut-fbleau.fr/~sayebabu/cinema/',
+            updateParent() {
+                this.update()
+                console.log("done")
+            }
+        };
+    </script>
+</main>
